@@ -6,7 +6,7 @@ const IMG_PATH = 'https://image.tmdb.org/t/p/w1280';
 const SEARCH_URL =
   'https://api.themoviedb.org/3/search/movie?api_key=71c72e51587ffa55d1c377e3ed0e5b0c&query="';
 
-console.log('dfs');
+console.log('zzakdol branch');
 
 const genreCodes = [
   { id: 28, name: 'Action' },
