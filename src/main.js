@@ -4,9 +4,19 @@ const API_URL =
 const IMG_PATH = 'https://image.tmdb.org/t/p/w1280';
 
 const SEARCH_URL =
-  'https://api.themoviedb.org/3/search/movie?api_key=71c72e51587ffa55d1c377e3ed0e5b0c&query="';
+  'https://api.themoviedb.org/3/search/movie?page=2&api_key=71c72e51587ffa55d1c377e3ed0e5b0c&query="';
 
-console.log('zzakdol branch');
+import Pagination from './pagination.js';
+import { $btn, $search, $form, $input, $main, $logo } from './utils/doms.js';
+
+const db = {};
+
+const pageState = {
+  total: null,
+  current: null,
+  isFirst: true,
+  isLast: false,
+};
 
 const genreCodes = [
   { id: 28, name: 'Action' },
@@ -37,7 +47,7 @@ async function getMovies(url) {
     if (res.ok) {
       const data = await res.json();
       console.log(data);
-      return data.results;
+      return data;
     } else {
       console.log('invalid url');
       return [];
@@ -97,10 +107,11 @@ async function searchMovies(term) {
 // vote_count: 4236
 
 function showMovies(movies) {
-  makeSkeleton(movies.length);
+  const moviesObj = movies.results;
+  makeSkeleton(moviesObj.length);
   setTimeout(() => {
     const $movies = document.querySelectorAll('.movie');
-    movies.forEach((movie, idx) => {
+    moviesObj.forEach((movie, idx) => {
       const {
         poster_path,
         title,
@@ -184,11 +195,19 @@ $logo.addEventListener('click', () => {
   init();
 });
 
+$btn.addEventListener('click', e => {
+  $search.classList.add('active');
+});
+
 async function init() {
-  // showSkeleton();
   const movieData = await getMovies(API_URL);
   showMovies(movieData);
 }
+
+new Pagination({
+  initialState: pageState,
+  onButton: () => {},
+});
 
 // init();
 
@@ -213,14 +232,11 @@ db = {
 
 /*
 1.pagination
- - 첫페이지는 prev 없음, 마지막 페이지는 next없음
- - 최대 20페이지까지만 랜더린
- - 한 번에 5개의 페이지만 랜더링
- - 클릭되면 chosen 클래스 추가되면서 색깔이 바뀜.
+
 
 4.history to go back and forth
+7.top rated / upcoming / now playing 버튼을 페이지 상단에 만들기.(유튭 처럼)
 6.sort by vote / release date
-7. top rated / upcoming / now playing 버튼을 페이지 상단에 만들기.(유튭 처럼)
 8.search term이 db에 있으면 꺼내 쓰기. 일일이 불러오지 말고
 
 bonus:component(if you want)
