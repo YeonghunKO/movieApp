@@ -1,4 +1,4 @@
-const $btn = document.querySelector('.btn');
+const $searchBtn = document.querySelector('.btn');
 const $search = document.querySelector('.search');
 const $form = document.querySelector('.form');
 const $input = document.querySelector('.input');
@@ -13,7 +13,7 @@ const $pages = document.querySelector('.prev');
 const $nextBtn = document.querySelector('.prev');
 
 export {
-  $btn,
+  $searchBtn,
   $search,
   $form,
   $input,

@@ -1,199 +1,36 @@
 const API_URL =
   'https://api.themoviedb.org/3/discover/movie?api_key=71c72e51587ffa55d1c377e3ed0e5b0c&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=1&with_watch_monetization_types=flatrate';
 
-const IMG_PATH = 'https://image.tmdb.org/t/p/w1280';
-
 const SEARCH_URL =
   'https://api.themoviedb.org/3/search/movie?page=2&api_key=71c72e51587ffa55d1c377e3ed0e5b0c&query="';
 
 import Pagination from './pagination.js';
-import { $btn, $search, $form, $input, $main, $logo } from './utils/doms.js';
 
-const db = {};
+import { $searchBtn, $search, $form, $input, $logo } from './utils/doms.js';
 
-const pageState = {
-  total: 6,
-  current: 1,
-  isFirst: true,
-  isLast: false,
+import getMovies from './utils/api.js';
+import showMovies from './utils/template.js';
+
+const db = {
+  trend: [],
+  topRated: [],
+  upComing: [],
+  nowPlaying: [],
 };
 
-const genreCodes = [
-  { id: 28, name: 'Action' },
-  { id: 12, name: 'Adventure' },
-  { id: 16, name: 'Animation' },
-  { id: 35, name: 'Comedy' },
-  { id: 80, name: 'Crime' },
-  { id: 99, name: 'Documentary' },
-  { id: 18, name: 'Drama' },
-  { id: 10751, name: 'Family' },
-  { id: 14, name: 'Fantasy' },
-  { id: 36, name: 'History' },
-  { id: 27, name: 'Horror' },
-  { id: 10402, name: 'Music' },
-  { id: 9648, name: 'Mystery' },
-  { id: 10749, name: 'Romance' },
-  { id: 878, name: 'Science Fiction' },
-  { id: 10770, name: 'TV Movie' },
-  { id: 53, name: 'Thriller' },
-  { id: 10752, name: 'War' },
-  { id: 37, name: 'Western' },
-];
+let pageState = {
+  total: null,
+  current: 1,
+};
 
-async function getMovies(url) {
-  try {
-    const res = await fetch(url);
-    // console.log(res);
-    if (res.ok) {
-      const data = await res.json();
-      // console.log(data);
-      return data;
-    } else {
-      console.log('invalid url');
-      return [];
-    }
-  } catch (error) {
-    console.log(error);
-    return [];
-  }
-}
-
-function makeSkeleton(num) {
-  $main.innerHTML = '';
-  let vDOM = document.createDocumentFragment();
-  for (let i = 0; i < num; i++) {
-    // const $divEle = document.createElement('div');
-    const $anchorEle = document.createElement('a');
-    $anchorEle.setAttribute('target', '_blank');
-    // $divEle.classList.add('movie');
-    $anchorEle.innerHTML = `
-    <div class='movie'>
-      <div class="poster animated-bg"></div>
-      <div class="movie-info">
-        <div class="title">
-          <span class="animated-bg animated-bg-text"></span>
-        </div>
-        <div class="genre">
-          <span class="animated-bg animated-bg-text"></span>
-        </div>
-        <div class="date">
-          <span class="animated-bg animated-bg-text"></span>
-        </div>
-        <div class="score animated-bg">&nbsp;</div>
-      </div>
-      <div class='overview'></div>
-    </div>
-     
-    `;
-    vDOM.appendChild($anchorEle);
-  }
-  $main.append(vDOM);
-}
+const setState = nextState => {
+  pageState = nextState;
+};
 
 async function searchMovies(term) {
   // showSkeleton();
   const movies = await getMovies(SEARCH_URL + term);
   showMovies(movies);
-}
-
-// adult: false
-// backdrop_path: "/lNyLSOKMMeUPr1RsL4KcRuIXwHt.jpg"
-// genre_ids: (3) [878, 28, 12]
-// id: 580489
-// original_language: "en"
-// original_title: "Venom: Let There Be Carnage"
-// overview: "After finding a host body in investigative reporter Eddie Brock, the alien symbiote must face a new enemy, Carnage, the alter ego of serial killer Cletus Kasady."
-// popularity: 7615.279
-// poster_path: "/rjkmN1dniUHVYAtwuV3Tji7FsDO.jpg"
-// release_date: "2021-09-30"
-// title: "Venom: Let There Be Carnage"
-// video: false
-// vote_average: 7.2
-// vote_count: 4236
-
-function showMovies(movies) {
-  const moviesObj = movies.results;
-  console.log(movies);
-  makeSkeleton(moviesObj.length);
-  setTimeout(() => {
-    const $movies = document.querySelectorAll('.movie');
-    moviesObj.forEach((movie, idx) => {
-      const {
-        poster_path,
-        title,
-        overview,
-        vote_average,
-        genre_ids,
-        release_date,
-        id,
-      } = movie;
-
-      const $anchor = $movies[idx].parentElement;
-      const $poster = $movies[idx].querySelector('.poster');
-      const $title = $movies[idx].querySelector('.title');
-      const $genre = $movies[idx].querySelector('.genre');
-      const $date = $movies[idx].querySelector('.date');
-      const $score = $movies[idx].querySelector('.score');
-      const $overview = $movies[idx].querySelector('.overview');
-
-      $anchor.setAttribute(
-        'href',
-        `https://www.themoviedb.org/movie/${id}${title}`
-      );
-
-      $poster.innerHTML = `
-      
-        <img src="${
-          poster_path
-            ? IMG_PATH + poster_path
-            : './src/assets/img/no_poster.png'
-        }" alt="${title}" />
-     
-
-      `;
-
-      $title.innerHTML = title;
-      $genre.innerHTML = decodeGenre(genre_ids);
-      $date.innerHTML = release_date;
-      $score.innerHTML = `${vote_average} / 10`;
-      $overview.innerHTML = `
-      <h3>Overview</h3>
-      ${overview}
-      `;
-
-      $score.classList.add(`${getClassByVote(vote_average)}`);
-
-      $poster.classList.remove('animated-bg');
-      $score.classList.remove('animated-bg');
-    });
-  }, 1000);
-  // this.setState()
-}
-
-function decodeGenre(genreArr) {
-  return genreArr
-    .map(genre => {
-      let genreName;
-      for (let i = 0; i <= genreCodes.length; i++) {
-        const genreCode = genreCodes[i];
-        if (genre === genreCode.id) {
-          genreName = genreCode.name;
-          break;
-        }
-      }
-      return genreName;
-    })
-    .join(' / ');
-}
-
-function getClassByVote(vote) {
-  if (vote >= 8) {
-    return 'green';
-  } else if (vote >= 5) {
-    return 'yellow';
-  } else {
-    return 'red';
-  }
 }
 
 $form.addEventListener('submit', function (e) {
@@ -210,22 +47,47 @@ $logo.addEventListener('click', () => {
   init();
 });
 
-$btn.addEventListener('click', e => {
+$searchBtn.addEventListener('click', e => {
   $search.classList.add('active');
+});
+
+const page = new Pagination({
+  onPrev: () => {
+    setState({ ...pageState, current: --pageState.current });
+    console.log(pageState);
+  },
+  onNext: () => {
+    setState({ ...pageState, current: ++pageState.current });
+    console.log(pageState);
+  },
+  onEllipsis: e => {
+    const { classList } = e.target.parentElement;
+    if (classList.value.includes('forward')) {
+      setState({ ...pageState, current: pageState.current + 2 });
+    } else {
+      setState({ ...pageState, current: pageState.current - 2 });
+    }
+    console.log(pageState);
+  },
+  onNumber: pageNumber => {
+    setState({ ...pageState, current: pageNumber });
+    console.log(pageState);
+  },
 });
 
 async function init() {
   const movieData = await getMovies(API_URL);
   showMovies(movieData);
-}
 
-new Pagination({
-  initialState: pageState,
-  onPrev: () => {},
-  onNext: () => {},
-  onEllipsis: () => {},
-  onNumber: () => {},
-});
+  const totalPage = movieData.total_pages;
+
+  if (totalPage > 20) {
+    setState({ ...pageState, total: 20 });
+  } else {
+    setState({ ...pageState, total: totalPage });
+  }
+  page.render(pageState.total, pageState.current);
+}
 
 init();
 

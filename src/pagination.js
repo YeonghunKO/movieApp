@@ -1,19 +1,16 @@
 import { $prevBtn, $pages, $nextBtn, $pageContainer } from './utils/doms.js';
+import CreatePagination from './utils/createPagination.js';
 
-export default function Pagination({
-  initialState,
-  onPrev,
-  onNext,
-  onEllipsis,
-  onNumber,
-}) {
-  this.state = initialState;
-  this.setState = nextState => {
-    this.state = nextState;
-    // current + 5 이상이면  render
+export default function Pagination({ onPrev, onNext, onEllipsis, onNumber }) {
+  // this.state = initialState;
+  // this.setState = nextState => {
+  //   this.state = nextState;
+  //   // current + 5 이상이면  render
+  // };
+
+  this.render = (pages, page) => {
+    $pageContainer.innerHTML = CreatePagination(pages, page);
   };
-
-  this.render = () => {};
 
   $pageContainer.addEventListener('click', async e => {
     const { nodeName } = e.target;
@@ -22,6 +19,7 @@ export default function Pagination({
       let buttonContent = e.target.textContent;
       if (isNaN(buttonContent)) {
         switch (buttonContent) {
+          // 아래 함수들에 어떤 인자를 pass할 것인가..
           case 'Previous':
             onPrev();
             break;
@@ -29,12 +27,7 @@ export default function Pagination({
             onNext();
             break;
           case '...':
-            onEllipsis();
-            const { classList } = e.target.parentElement;
-            // console.log(classList.values.includes('forward'));
-            if (classList.value.includes('forward')) {
-            } else {
-            }
+            onEllipsis(e);
             break;
           default:
             console.log('invalid text');

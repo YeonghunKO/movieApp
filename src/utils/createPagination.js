@@ -1,5 +1,3 @@
-import { $pageContainer } from './utils/doms.js';
-
 export default function CreatePagination(pages, page) {
   page = parseInt(page);
   pages = parseInt(pages);
@@ -74,5 +72,6 @@ export default function CreatePagination(pages, page) {
   }
 
   str += '</ul>';
-  $pageContainer.innerHTML = str;
+  return str;
+  // $pageContainer.innerHTML = str;
 }
