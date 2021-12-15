@@ -7,7 +7,7 @@ const $main = document.querySelector('#main');
 
 const $logo = document.querySelector('.logo');
 
-const $pageContainer = document.querySelector('.pagination');
+const $pageContainer = document.querySelector('#pagination');
 const $prevBtn = document.querySelector('.prev');
 const $pages = document.querySelector('.prev');
 const $nextBtn = document.querySelector('.prev');

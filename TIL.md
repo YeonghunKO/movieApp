@@ -23,6 +23,20 @@
 
 `https://stackoverflow.com/questions/5657964/css-why-doesn-t-percentage-height-work` 참고!
 
+7. pagination에서 prev를 클릭했는데 계속 자식의 span아니면 fas아이콘이 클릭이 되더라.. 원래 부모인 prev가 클릭이 되야하는데! 그래서 구글링 해본 결과 아래 코드를 입력하면 자식 요소의 클릭이벤트가 무효화 되면서 부모만 클릭되게 할 수 있다
+
+```css
+.prev *,
+.next * {
+  pointer-events: none;
+}
+/* 별표는 모든 자식을 뜻함 */
+```
+
+8. `[blahblah]{}`는 `blahblah` 라는 attribute를 가지고 있는 태그를 의미(pagination 구현하다가 알게 된것) JS에선 `document.querySelectorAll('[href]')` 라고 표현가능(href attribute를 갖고 있는 node를 선택)
+
+9. 버튼을 눌렀을때 색깔바뀌는 거 JS말고 css에서 focus선택자로 구현가능.
+
 # JS
 
 1. API 사용법을 알고 싶으면 `https://developers.themoviedb.org/3/getting-started/introduction` 에 들어가서 검색란에 내용을 검색하면 된다.

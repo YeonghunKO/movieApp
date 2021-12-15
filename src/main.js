@@ -12,8 +12,8 @@ import { $btn, $search, $form, $input, $main, $logo } from './utils/doms.js';
 const db = {};
 
 const pageState = {
-  total: null,
-  current: null,
+  total: 6,
+  current: 1,
   isFirst: true,
   isLast: false,
 };
@@ -46,7 +46,7 @@ async function getMovies(url) {
     // console.log(res);
     if (res.ok) {
       const data = await res.json();
-      console.log(data);
+      // console.log(data);
       return data;
     } else {
       console.log('invalid url');
@@ -62,25 +62,30 @@ function makeSkeleton(num) {
   $main.innerHTML = '';
   let vDOM = document.createDocumentFragment();
   for (let i = 0; i < num; i++) {
-    const divEle = document.createElement('div');
-    divEle.classList.add('movie');
-    divEle.innerHTML = `
+    // const $divEle = document.createElement('div');
+    const $anchorEle = document.createElement('a');
+    $anchorEle.setAttribute('target', '_blank');
+    // $divEle.classList.add('movie');
+    $anchorEle.innerHTML = `
+    <div class='movie'>
       <div class="poster animated-bg"></div>
-        <div class="movie-info">
-          <div class="title">
-            <span class="animated-bg animated-bg-text"></span>
-          </div>
-          <div class="genre">
-            <span class="animated-bg animated-bg-text"></span>
-          </div>
-          <div class="date">
-            <span class="animated-bg animated-bg-text"></span>
-          </div>
-          <div class="score animated-bg">&nbsp;</div>
+      <div class="movie-info">
+        <div class="title">
+          <span class="animated-bg animated-bg-text"></span>
+        </div>
+        <div class="genre">
+          <span class="animated-bg animated-bg-text"></span>
+        </div>
+        <div class="date">
+          <span class="animated-bg animated-bg-text"></span>
+        </div>
+        <div class="score animated-bg">&nbsp;</div>
       </div>
       <div class='overview'></div>
+    </div>
+     
     `;
-    vDOM.appendChild(divEle);
+    vDOM.appendChild($anchorEle);
   }
   $main.append(vDOM);
 }
@@ -108,6 +113,7 @@ async function searchMovies(term) {
 
 function showMovies(movies) {
   const moviesObj = movies.results;
+  console.log(movies);
   makeSkeleton(moviesObj.length);
   setTimeout(() => {
     const $movies = document.querySelectorAll('.movie');
@@ -119,8 +125,10 @@ function showMovies(movies) {
         vote_average,
         genre_ids,
         release_date,
+        id,
       } = movie;
 
+      const $anchor = $movies[idx].parentElement;
       const $poster = $movies[idx].querySelector('.poster');
       const $title = $movies[idx].querySelector('.title');
       const $genre = $movies[idx].querySelector('.genre');
@@ -128,10 +136,20 @@ function showMovies(movies) {
       const $score = $movies[idx].querySelector('.score');
       const $overview = $movies[idx].querySelector('.overview');
 
+      $anchor.setAttribute(
+        'href',
+        `https://www.themoviedb.org/movie/${id}${title}`
+      );
+
       $poster.innerHTML = `
-      <img src="${
-        poster_path ? IMG_PATH + poster_path : './src/assets/img/no_poster.png'
-      }" alt="${title}" />
+      
+        <img src="${
+          poster_path
+            ? IMG_PATH + poster_path
+            : './src/assets/img/no_poster.png'
+        }" alt="${title}" />
+     
+
       `;
 
       $title.innerHTML = title;
@@ -149,10 +167,7 @@ function showMovies(movies) {
       $score.classList.remove('animated-bg');
     });
   }, 1000);
-
-  // const animatedBgs = document.querySelectorAll('.animated-bg');
-  // animatedBgs.forEach(bg => bg.classList.remove('animated-bg'));
-  // console.log(movie2);
+  // this.setState()
 }
 
 function decodeGenre(genreArr) {
@@ -206,10 +221,13 @@ async function init() {
 
 new Pagination({
   initialState: pageState,
-  onButton: () => {},
+  onPrev: () => {},
+  onNext: () => {},
+  onEllipsis: () => {},
+  onNumber: () => {},
 });
 
-// init();
+init();
 
 /*
 

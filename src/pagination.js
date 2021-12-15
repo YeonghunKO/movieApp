@@ -1,19 +1,51 @@
 import { $prevBtn, $pages, $nextBtn, $pageContainer } from './utils/doms.js';
 
-export default function Pagination({ initialState, onButton }) {
+export default function Pagination({
+  initialState,
+  onPrev,
+  onNext,
+  onEllipsis,
+  onNumber,
+}) {
   this.state = initialState;
   this.setState = nextState => {
     this.state = nextState;
+    // current + 5 이상이면  render
   };
 
   this.render = () => {};
 
-  $pageContainer.addEventListener('click', e => {
-    const { className } = e.target;
-    const buttonNameArr = ['prev', 'next', 'button'];
-    const isBtnClicked = buttonNameArr.some(name => className.includes(name));
-    if (isBtnClicked) {
-      console.log(className);
+  $pageContainer.addEventListener('click', async e => {
+    const { nodeName } = e.target;
+
+    if (nodeName === 'A') {
+      let buttonContent = e.target.textContent;
+      if (isNaN(buttonContent)) {
+        switch (buttonContent) {
+          case 'Previous':
+            onPrev();
+            break;
+          case 'Next':
+            onNext();
+            break;
+          case '...':
+            onEllipsis();
+            const { classList } = e.target.parentElement;
+            // console.log(classList.values.includes('forward'));
+            if (classList.value.includes('forward')) {
+            } else {
+            }
+            break;
+          default:
+            console.log('invalid text');
+            break;
+        }
+      } else {
+        buttonContent = parseFloat(buttonContent);
+        onNumber(buttonContent);
+        // console.log(data);
+      }
+      // console.log('state.currentPage: ', state.currentPage);
     }
   });
 }

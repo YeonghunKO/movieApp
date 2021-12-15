@@ -63,25 +63,38 @@
           <div class="score animated-bg">&nbsp;</div>
         </div>
       </div>
-      
     </main>
-    <footer class="pagination">
-      <div class="prev">
-        <i class="fas fa-chevron-left"></i>
-        <span>prev</span>
-      </div>
-      <div class="pages">
-        <button class="button">1</button>
-        <button class="button">2</button>
-        <button class="button">3</button>
-        <!-- <button class="button">4</button>
-        <button class="button">5</button> -->
-      </div>
-      <div class="next">
-        <span>next</span>
-        <i class="fas fa-chevron-right"></i>
-      </div>
-    </div>
+    <footer id="pagination">
+      <ul>
+        <li class="page-item previous no">
+          <i class="fas fa-chevron-left"></i>
+          <a>Previous</a>
+        </li>
+        <li class="no page-item"><a>1</a></li>
+        <li class="out-of-range backward">
+          <a onclick="createPagination(20,7)">...</a>
+        </li>
+        <li class="no">
+          <a>8</a>
+        </li>
+        <li class="active">
+          <a>9</a>
+        </li>
+        <li class="no">
+          <a>10</a>
+        </li>
+        <li class="out-of-range forward">
+          <a onclick="createPagination(20,11)">...</a>
+        </li>
+        <li class="page-item no">
+          <a>20</a>
+        </li>
+        <li class="page-item next no">
+          <a>Next</a>
+          <i class="fas fa-chevron-right"></i>
+        </li>
+      </ul>
+    </footer>
 
     <script src="./src/main.js" type="module"></script>
   </body>
