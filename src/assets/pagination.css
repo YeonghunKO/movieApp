@@ -7,7 +7,8 @@ a:hover {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  margin: 2rem 0 1rem 0;
+  margin-top: 4rem;
+  margin-bottom: 1rem;
 }
 
 ul {
@@ -22,9 +23,7 @@ ul li {
 }
 
 ul li a {
-  /* background-color: #444b6e; */
   padding: 5px 10px;
-  /* border: 2px solid #3d315b; */
   border-right: 0;
   font-weight: bold;
 }
@@ -43,7 +42,6 @@ ul li:first-child a {
 
 ul li:last-child a {
   border-radius: 0 5px 5px 0;
-  /* border-right: 2px solid #3d315b; */
 }
 
 .next,

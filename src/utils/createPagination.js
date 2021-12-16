@@ -24,9 +24,11 @@ export default function CreatePagination(pages, page) {
     if (page > 2) {
       str += '<li class="no page-item"><a>1</a></li>';
       if (page > 3) {
+        // inline 이벤트가 안먹힌다.. createPagination이 전역에 없어서 그런듯..
+        // 결국 addEvent로 구현해야하나? 그래도 한번쯤은 inline으로 해보고 싶었는데...
         str += `
           <li class="out-of-range backward">
-            <a onclick="createPagination(${pages},${page - 2})">...</a>
+            <a>...</a>
           </li>`;
       }
     }
@@ -53,7 +55,7 @@ export default function CreatePagination(pages, page) {
       if (page < pages - 2) {
         str += `
           <li class="out-of-range forward">
-            <a onclick="createPagination(${pages},${page + 2})">...</a>
+            <a>...</a>
           </li>`;
       }
       str += `

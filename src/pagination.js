@@ -1,15 +1,20 @@
 import { $prevBtn, $pages, $nextBtn, $pageContainer } from './utils/doms.js';
 import CreatePagination from './utils/createPagination.js';
 
-export default function Pagination({ onPrev, onNext, onEllipsis, onNumber }) {
-  // this.state = initialState;
-  // this.setState = nextState => {
-  //   this.state = nextState;
-  //   // current + 5 이상이면  render
-  // };
+export default function Pagination({ trendMovieShowWithPage }) {
+  this.state = {
+    total: null,
+    current: 1,
+  };
 
-  this.render = (pages, page) => {
-    $pageContainer.innerHTML = CreatePagination(pages, page);
+  this.setState = nextState => {
+    this.state = nextState;
+    this.render();
+  };
+
+  this.render = () => {
+    const { total, current } = this.state;
+    $pageContainer.innerHTML = CreatePagination(total, current);
   };
 
   $pageContainer.addEventListener('click', async e => {
@@ -21,24 +26,30 @@ export default function Pagination({ onPrev, onNext, onEllipsis, onNumber }) {
         switch (buttonContent) {
           // 아래 함수들에 어떤 인자를 pass할 것인가..
           case 'Previous':
-            onPrev();
+            this.setState({ ...this.state, current: --this.state.current });
+
             break;
           case 'Next':
-            onNext();
+            this.setState({ ...this.state, current: ++this.state.current });
+
             break;
           case '...':
-            onEllipsis(e);
+            const { classList } = e.target.parentElement;
+            if (classList.value.includes('forward')) {
+              this.setState({ ...this.state, current: this.state.current + 2 });
+            } else {
+              this.setState({ ...this.state, current: this.state.current - 2 });
+            }
+
             break;
           default:
-            console.log('invalid text');
             break;
         }
       } else {
         buttonContent = parseFloat(buttonContent);
-        onNumber(buttonContent);
-        // console.log(data);
+        this.setState({ ...this.state, current: buttonContent });
       }
-      // console.log('state.currentPage: ', state.currentPage);
+      trendMovieShowWithPage(this.state.current);
     }
   });
 }

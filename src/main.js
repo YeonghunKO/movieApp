@@ -1,4 +1,4 @@
-const API_URL =
+const TREND_API_URL =
   'https://api.themoviedb.org/3/discover/movie?api_key=71c72e51587ffa55d1c377e3ed0e5b0c&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=1&with_watch_monetization_types=flatrate';
 
 const SEARCH_URL =
@@ -18,19 +18,16 @@ const db = {
   nowPlaying: [],
 };
 
-let pageState = {
-  total: null,
-  current: 1,
-};
-
-const setState = nextState => {
-  pageState = nextState;
-};
+const page = new Pagination({
+  trendMovieShowWithPage,
+});
 
 async function searchMovies(term) {
   // showSkeleton();
   const movies = await getMovies(SEARCH_URL + term);
-  showMovies(movies);
+  const { results, total_pages } = movies;
+  showMovies(results);
+  setPagenation(total_pages);
 }
 
 $form.addEventListener('submit', function (e) {
@@ -51,44 +48,47 @@ $searchBtn.addEventListener('click', e => {
   $search.classList.add('active');
 });
 
-const page = new Pagination({
-  onPrev: () => {
-    setState({ ...pageState, current: --pageState.current });
-    console.log(pageState);
-  },
-  onNext: () => {
-    setState({ ...pageState, current: ++pageState.current });
-    console.log(pageState);
-  },
-  onEllipsis: e => {
-    const { classList } = e.target.parentElement;
-    if (classList.value.includes('forward')) {
-      setState({ ...pageState, current: pageState.current + 2 });
-    } else {
-      setState({ ...pageState, current: pageState.current - 2 });
-    }
-    console.log(pageState);
-  },
-  onNumber: pageNumber => {
-    setState({ ...pageState, current: pageNumber });
-    console.log(pageState);
-  },
-});
-
 async function init() {
-  const movieData = await getMovies(API_URL);
-  showMovies(movieData);
-
-  const totalPage = movieData.total_pages;
-
-  if (totalPage > 20) {
-    setState({ ...pageState, total: 20 });
-  } else {
-    setState({ ...pageState, total: totalPage });
-  }
-  page.render(pageState.total, pageState.current);
+  const movieData = await getMovies(TREND_API_URL);
+  const { results, total_pages } = movieData;
+  showMovies(results);
+  setPagenation(total_pages);
 }
 
+function setPagenation(totalPage) {
+  if (totalPage > 20) {
+    page.setState({ ...page.state, total: 20 });
+  } else {
+    page.setState({ ...page.state, total: totalPage });
+  }
+}
+
+async function trendMovieShowWithPage(page) {
+  if (db['trend'][page]) {
+    showMovies(db['trend'][page]);
+  } else {
+    const movieData = await getMovies(
+      `https://api.themoviedb.org/3/discover/movie?api_key=71c72e51587ffa55d1c377e3ed0e5b0c&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=${page}&with_watch_monetization_types=flatrate`
+    );
+    const { results } = movieData;
+    showMovies(results);
+    db['trend'][page] = results;
+  }
+  console.log(db);
+}
+
+async function searchMoviewShowWithPage(term, page) {
+  if (db[term][page]) {
+    showMovies(db[term][page]);
+  } else {
+    const movieData = await getMovies(
+      `https://api.themoviedb.org/3/discover/movie?api_key=71c72e51587ffa55d1c377e3ed0e5b0c&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=${page}&with_watch_monetization_types=flatrate`
+    );
+    const { results } = movieData;
+    showMovies(results);
+    db['trend'][page] = results;
+  }
+}
 init();
 
 /*

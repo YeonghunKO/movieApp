@@ -57,12 +57,10 @@ function makeSkeleton(num) {
 }
 
 export default function showMovies(movies) {
-  const moviesObj = movies.results;
-  console.log(movies);
-  makeSkeleton(moviesObj.length);
+  makeSkeleton(movies.length);
   setTimeout(() => {
     const $movies = document.querySelectorAll('.movie');
-    moviesObj.forEach((movie, idx) => {
+    movies.forEach((movie, idx) => {
       const {
         poster_path,
         title,
