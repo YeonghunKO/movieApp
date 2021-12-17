@@ -1,7 +1,7 @@
 import { $prevBtn, $pages, $nextBtn, $pageContainer } from './utils/doms.js';
 import CreatePagination from './utils/createPagination.js';
 
-export default function Pagination({ trendMovieShowWithPage }) {
+export default function Pagination({ onPage }) {
   this.state = {
     total: null,
     current: 1,
@@ -27,11 +27,9 @@ export default function Pagination({ trendMovieShowWithPage }) {
           // 아래 함수들에 어떤 인자를 pass할 것인가..
           case 'Previous':
             this.setState({ ...this.state, current: --this.state.current });
-
             break;
           case 'Next':
             this.setState({ ...this.state, current: ++this.state.current });
-
             break;
           case '...':
             const { classList } = e.target.parentElement;
@@ -40,16 +38,16 @@ export default function Pagination({ trendMovieShowWithPage }) {
             } else {
               this.setState({ ...this.state, current: this.state.current - 2 });
             }
-
             break;
           default:
+            console.log('invalid content');
             break;
         }
       } else {
         buttonContent = parseFloat(buttonContent);
         this.setState({ ...this.state, current: buttonContent });
       }
-      trendMovieShowWithPage(this.state.current);
+      onPage(this.state.current);
     }
   });
 }

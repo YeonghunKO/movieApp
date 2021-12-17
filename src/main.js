@@ -2,7 +2,7 @@ const TREND_API_URL =
   'https://api.themoviedb.org/3/discover/movie?api_key=71c72e51587ffa55d1c377e3ed0e5b0c&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=1&with_watch_monetization_types=flatrate';
 
 const SEARCH_URL =
-  'https://api.themoviedb.org/3/search/movie?page=2&api_key=71c72e51587ffa55d1c377e3ed0e5b0c&query="';
+  'https://api.themoviedb.org/3/search/movie?page=1&api_key=71c72e51587ffa55d1c377e3ed0e5b0c&query="';
 
 import Pagination from './pagination.js';
 
@@ -10,6 +10,10 @@ import { $searchBtn, $search, $form, $input, $logo } from './utils/doms.js';
 
 import getMovies from './utils/api.js';
 import showMovies from './utils/template.js';
+
+let dbType = 'trend';
+
+let searchTerm = null;
 
 const db = {
   trend: [],
@@ -19,7 +23,7 @@ const db = {
 };
 
 const page = new Pagination({
-  trendMovieShowWithPage,
+  onPage,
 });
 
 async function searchMovies(term) {
@@ -28,6 +32,8 @@ async function searchMovies(term) {
   const { results, total_pages } = movies;
   showMovies(results);
   setPagenation(total_pages);
+  dbType = 'searching';
+  searchTerm = term;
 }
 
 $form.addEventListener('submit', function (e) {
@@ -53,42 +59,81 @@ async function init() {
   const { results, total_pages } = movieData;
   showMovies(results);
   setPagenation(total_pages);
+  dbType = 'trend';
 }
 
 function setPagenation(totalPage) {
   if (totalPage > 20) {
-    page.setState({ ...page.state, total: 20 });
+    page.setState({ current: 1, total: 20 });
   } else {
-    page.setState({ ...page.state, total: totalPage });
+    page.setState({ current: 1, total: totalPage });
   }
 }
 
-async function trendMovieShowWithPage(page) {
-  if (db['trend'][page]) {
-    showMovies(db['trend'][page]);
-  } else {
-    const movieData = await getMovies(
-      `https://api.themoviedb.org/3/discover/movie?api_key=71c72e51587ffa55d1c377e3ed0e5b0c&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=${page}&with_watch_monetization_types=flatrate`
-    );
-    const { results } = movieData;
-    showMovies(results);
-    db['trend'][page] = results;
+async function onPage(page) {
+  console.log('dbType:', dbType);
+  switch (dbType) {
+    case 'trend':
+      showMoviesByDb(dbType, page);
+      break;
+    case 'topRated':
+      break;
+    case 'upComing':
+      break;
+    case 'nowPlaying':
+      break;
+    case 'searching':
+      if (!db[searchTerm]) {
+        db[searchTerm] = [];
+      }
+      showMoviesByDb(searchTerm, page);
+      break;
+
+    default:
+      console.log('invalid currentStatus');
+      break;
   }
   console.log(db);
 }
 
-async function searchMoviewShowWithPage(term, page) {
-  if (db[term][page]) {
-    showMovies(db[term][page]);
+async function showMoviesByDb(dbKey, page) {
+  console.log('dbKey:', dbKey);
+  console.log('page:', page);
+  let movieData;
+  if (db[dbKey][page]) {
+    console.log('searching in db...');
+    showMovies(db[dbKey][page]);
   } else {
-    const movieData = await getMovies(
-      `https://api.themoviedb.org/3/discover/movie?api_key=71c72e51587ffa55d1c377e3ed0e5b0c&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=${page}&with_watch_monetization_types=flatrate`
-    );
+    console.log('get new data');
+    switch (dbType) {
+      case 'trend':
+        movieData = await getMovies(
+          `https://api.themoviedb.org/3/discover/movie?api_key=71c72e51587ffa55d1c377e3ed0e5b0c&language=en-US&sort_by=popularity.desc&include_adult=true&include_video=false&page=${page}&with_watch_monetization_types=flatrate`
+        );
+        break;
+      case 'topRated':
+        break;
+
+      case 'upComing':
+        break;
+
+      case 'nowPlaying':
+        break;
+      case 'searching':
+        movieData = await getMovies(
+          `https://api.themoviedb.org/3/search/movie?page=${page}&api_key=71c72e51587ffa55d1c377e3ed0e5b0c&query="${searchTerm}`
+        );
+        break;
+
+      default:
+        break;
+    }
     const { results } = movieData;
     showMovies(results);
-    db['trend'][page] = results;
+    db[dbKey][page] = results;
   }
 }
+
 init();
 
 /*
@@ -111,13 +156,11 @@ db = {
 */
 
 /*
-1.pagination
 
 
 4.history to go back and forth
 7.top rated / upcoming / now playing 버튼을 페이지 상단에 만들기.(유튭 처럼)
 6.sort by vote / release date
-8.search term이 db에 있으면 꺼내 쓰기. 일일이 불러오지 말고
 
 bonus:component(if you want)
 

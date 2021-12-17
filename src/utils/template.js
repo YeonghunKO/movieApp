@@ -104,7 +104,7 @@ export default function showMovies(movies) {
         ${overview}
         `;
 
-      $score.classList.add(`${getClassByVote(vote_average)}`);
+      $score.classList.add(`${getClassByVote(parseInt(vote_average))}`);
 
       $poster.classList.remove('animated-bg');
       $score.classList.remove('animated-bg');
