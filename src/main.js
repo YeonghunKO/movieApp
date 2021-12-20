@@ -11,7 +11,7 @@ import {
 } from './utils/doms.js';
 
 import getMovies from './utils/api.js';
-import showMovies from './utils/template.js';
+import showMoviesByObj from './utils/template.js';
 
 let state = {
   dbType: 'trend',
@@ -80,21 +80,24 @@ function setPagenation(totalPage) {
 
 async function init({ dbType, searchTerm }) {
   if (dbType === 'searching') {
+    if (!db[searchTerm]) {
+      db[searchTerm] = [];
+    }
     setState({ dbType, searchTerm });
   } else {
     setState({ ...state, dbType });
   }
 
   const movieData = await getDataByCurrentDbType({ page: 1 });
-  const { results, total_pages } = movieData;
-  showMovies(results);
+  const { total_pages } = movieData;
+
+  showMoviesByDb(state.dbType, 1);
   setPagenation(total_pages);
 }
 
 $form.addEventListener('submit', function (e) {
   e.preventDefault();
   const searchTerm = $input.value.trim();
-  //   console.log(this.value);
   if (searchTerm.length > 0) {
     init({ dbType: 'searching', searchTerm });
   }
@@ -131,16 +134,31 @@ $dropDown.addEventListener('click', e => {
         init({ dbType: 'nowPlaying' });
         break;
       case 'Vote':
+        sortBy('vote');
         break;
       case 'Release date':
+        sortBy('date');
         break;
       default:
         console.log('invalid textContent');
     }
-    // console.log($chosen);
-    //   if()
   }
 });
+
+function sortBy(type) {
+  let sortedPageData;
+  if (type === 'vote') {
+    console.log(type);
+    sortedPageData = db[state.dbType][page.state.current].sort(
+      (a, b) => b.vote_average - a.vote_average
+    );
+  } else {
+    sortedPageData = db[state.dbType][page.state.current].sort(
+      (a, b) => new Date(b.release_date) - new Date(a.release_date)
+    );
+  }
+  showMoviesByObj(sortedPageData);
+}
 
 async function onPage(page) {
   console.log('dbType:', state.dbType);
@@ -160,12 +178,12 @@ async function showMoviesByDb(dbKey, page) {
   let movieData;
   if (db[dbKey][page]) {
     console.log('searching in db...');
-    showMovies(db[dbKey][page]);
+    showMoviesByObj(db[dbKey][page]);
   } else {
     console.log('get new data');
     movieData = await getDataByCurrentDbType({ page });
     const { results } = movieData;
-    showMovies(results);
+    showMoviesByObj(results);
     db[dbKey][page] = results;
   }
   console.log(db);

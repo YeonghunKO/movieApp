@@ -56,7 +56,7 @@ function makeSkeleton(num) {
   $main.append(vDOM);
 }
 
-export default function showMovies(movies) {
+export default function showMoviesByObj(movies) {
   makeSkeleton(movies.length);
   setTimeout(() => {
     const $movies = document.querySelectorAll('.movie');
@@ -85,14 +85,11 @@ export default function showMovies(movies) {
       );
 
       $poster.innerHTML = `
-        
           <img src="${
             poster_path
               ? IMG_PATH + poster_path
               : './src/assets/img/no_poster.png'
           }" alt="${title}" />
-       
-  
         `;
 
       $title.innerHTML = title;
@@ -110,7 +107,6 @@ export default function showMovies(movies) {
       $score.classList.remove('animated-bg');
     });
   }, 1000);
-  // this.setState()
 }
 
 function decodeGenre(genreArr) {
