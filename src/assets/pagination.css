@@ -32,7 +32,7 @@ ul li.active {
   color: rgba(255, 99, 71, 0.842);
 }
 
-ul li:hover {
+ul li:hover:not(nav .dropdown) {
   opacity: 0.7;
 }
 

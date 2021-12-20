@@ -37,6 +37,18 @@
 
 9. 버튼을 눌렀을때 색깔바뀌는 거 JS말고 css에서 focus선택자로 구현가능.
 
+10. 기본적으로 개발자 도구에서는 hover된 상태에서의 스타일을 보여주지 않고 있다. hover되었을 때 적용되는 스타일을 볼려면 개발자 도구 오른쪽 상단에 '필터' 옆에 ':hov' 를 누르면 된다.
+
+    - 보니깐 pagination의 hover가 상속되어서 nav까지 opaciity가 적용되었다. 따라서 아래의 코드를 적용시켜줌
+
+    ```css
+    ul li:hover:not(nav .dropdown) {
+      opacity: 0.7;
+    }
+    ```
+
 # JS
 
 1. API 사용법을 알고 싶으면 `https://developers.themoviedb.org/3/getting-started/introduction` 에 들어가서 검색란에 내용을 검색하면 된다.
+
+2. closest는 오로지 내 조상들에게만 적용, 조상들의 형제 자매에겐 적용안됨.

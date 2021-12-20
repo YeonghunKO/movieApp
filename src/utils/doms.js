@@ -12,6 +12,7 @@ const $prevBtn = document.querySelector('.prev');
 const $pages = document.querySelector('.prev');
 const $nextBtn = document.querySelector('.prev');
 
+const $dropDown = document.querySelector('.menu');
 export {
   $searchBtn,
   $search,
@@ -23,4 +24,5 @@ export {
   $prevBtn,
   $pages,
   $nextBtn,
+  $dropDown,
 };

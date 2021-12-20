@@ -1,0 +1,113 @@
+nav {
+  position: relative;
+  top: 62px;
+  z-index: 1;
+  margin: 0 1rem;
+}
+
+.menu {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 0;
+}
+
+.dropdown {
+  position: relative;
+  padding: 5px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background: #34495e;
+  font-size: 15px;
+  font-weight: bold;
+  perspective: 1000px;
+  z-index: 100;
+  min-width: 8rem;
+}
+.dropdown:hover {
+  background: #2980b9;
+  cursor: pointer;
+}
+.dropdown:hover .dropdown_menu li,
+.dropdown:hover .dropdown_menu {
+  display: block;
+}
+.dropdown_menu {
+  position: absolute;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding-left: 0;
+  top: 100%;
+  /* left: 0; */
+  width: 100%;
+  perspective: 1000px;
+  z-index: -1;
+  list-style: none;
+}
+
+.dropdown_menu li {
+  display: none;
+  color: #fff;
+  background-color: #34495e;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 0;
+}
+
+.dropdown_menu li:nth-last-child(1) {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.dropdown_menu li:hover {
+  height: 100%;
+  background: linear-gradient(90deg, #2980b9 6%, #34495e 6%);
+}
+
+.dropdown_menu li:focus .dropdown_menu {
+  display: none;
+  opacity: 0;
+}
+
+.dropdown_menu .dropdown_item.one {
+  transform-origin: top center;
+  animation: rotateX 300ms 60ms ease-in-out forwards;
+}
+.dropdown_menu .dropdown_item.two {
+  transform-origin: top center;
+  animation: rotateX 300ms 150ms ease-in-out forwards;
+}
+.dropdown_menu .dropdown_item.three {
+  transform-origin: top center;
+  animation: rotateX 300ms 210ms ease-in-out forwards;
+}
+/* .dropdown_menu .dropdown_item-4 {
+  transform-origin: top center;
+  animation: rotateX 300ms 240ms ease-in-out forwards;
+}
+.dropdown_menu .dropdown_item-5 {
+  transform-origin: top center;
+  animation: rotateX 300ms 300ms ease-in-out forwards;
+} */
+
+@keyframes rotateX {
+  0% {
+    opacity: 0;
+    transform: rotateX(-90deg);
+  }
+  50% {
+    transform: rotateX(-20deg);
+  }
+  100% {
+    opacity: 1;
+    transform: rotateX(0deg);
+  }
+}
+/* 
+.invisible {
+  display: none;
+} */
