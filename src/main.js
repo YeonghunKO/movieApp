@@ -1,4 +1,3 @@
-const API_KEY = '71c72e51587ffa55d1c377e3ed0e5b0c';
 import Pagination from './pagination.js';
 
 import {
@@ -12,6 +11,8 @@ import {
 
 import getMovies from './utils/api.js';
 import showMoviesByObj from './utils/template.js';
+
+const API_KEY = '71c72e51587ffa55d1c377e3ed0e5b0c';
 
 let state = {
   dbType: 'trend',
@@ -84,14 +85,15 @@ async function init({ dbType, searchTerm }) {
       db[searchTerm] = [];
     }
     setState({ dbType, searchTerm });
+    showMoviesByDb(state.searchTerm, 1);
   } else {
     setState({ ...state, dbType });
+    showMoviesByDb(state.dbType, 1);
   }
 
   const movieData = await getDataByCurrentDbType({ page: 1 });
   const { total_pages } = movieData;
 
-  showMoviesByDb(state.dbType, 1);
   setPagenation(total_pages);
 }
 
@@ -149,11 +151,11 @@ function sortBy(type) {
   let sortedPageData;
   if (type === 'vote') {
     console.log(type);
-    sortedPageData = db[state.dbType][page.state.current].sort(
+    sortedPageData = db[state.searchTerm][page.state.current].sort(
       (a, b) => b.vote_average - a.vote_average
     );
   } else {
-    sortedPageData = db[state.dbType][page.state.current].sort(
+    sortedPageData = db[state.searchTerm][page.state.current].sort(
       (a, b) => new Date(b.release_date) - new Date(a.release_date)
     );
   }
@@ -193,8 +195,6 @@ init({ dbType: 'trend' });
 
 /*
 4.history to go back and forth
-7.top rated / upcoming / now playing 버튼을 페이지 상단에 만들기.(유튭 처럼)
-6.sort by vote / release date
 
 bonus:component(if you want)
 

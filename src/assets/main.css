@@ -31,6 +31,7 @@ body {
   background-color: var(--primary-color);
   font-family: 'Murecho', sans-serif;
   margin: 0;
+  overflow-x: hidden;
 }
 
 :root {
@@ -51,6 +52,14 @@ body {
   /* display: grid;
   grid-auto-rows: minmax(100px, auto);
   grid-auto-columns: minmax(100px, auto); */
+}
+
+#main a:hover {
+  transform: scale(1.1);
+}
+
+#main a {
+  transition: transform 0.1s ease-in;
 }
 
 .movie {
