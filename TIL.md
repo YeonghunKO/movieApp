@@ -47,8 +47,16 @@
     }
     ```
 
+11. 드랍다운 [링크](https://codepen.io/codypearce/pen/PdBXpj?editors=0100) 참고
+
 # JS
 
 1. API 사용법을 알고 싶으면 `https://developers.themoviedb.org/3/getting-started/introduction` 에 들어가서 검색란에 내용을 검색하면 된다.
 
 2. closest는 오로지 내 조상들에게만 적용, 조상들의 형제 자매에겐 적용안됨.
+
+3. mix에서 `Uncaught (in promise) TypeError: Cannot read properties of null (reading 'removeChild')` 에러가 뜨는 이유는 mix안에 target이 ajax call 하기 전의 target의 데이터를 가지고 ajax call하고 난뒤의 target에 적용하려고 하기 때문에 그렇다.
+
+예를 들면, ajax call하기 전의 main의 콘텐츠가 `dbType:trend ,page:1`이라고 가정하자. 그러나 두번째 페이지를 누르거나 카테고리를 바꾸면 target도 그에 따라서 바뀌어야 하는 데 mix에 저장되어있는 target은 여전히 `dbType:trend ,page:1` 이다. 따라서 trend안에 있는 target들을 하나하나 main에서 찾고 옮겨야하는 mixitup에서 오류가 발생하는 것이다. 찾을 수 없으니 null이라고 뜨는 것 같다.
+
+따라서, 그전의 mix instance를 없애고 새로 mix를 만들고 target을 설정해줘야한다. 그때 필요한 메소드가 `.destroy()` 이다! (mixitup api 문서에 나와 있다.) 그래서 페이지, 카테고리가 바뀔때마다 destroy를 해주어 instance를 새로 갱신해주었다.

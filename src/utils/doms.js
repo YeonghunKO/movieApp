@@ -8,11 +8,11 @@ const $main = document.querySelector('#main');
 const $logo = document.querySelector('.logo');
 
 const $pageContainer = document.querySelector('#pagination');
-const $prevBtn = document.querySelector('.prev');
-const $pages = document.querySelector('.prev');
-const $nextBtn = document.querySelector('.prev');
 
 const $dropDown = document.querySelector('.menu');
+const $sortContent = document.querySelector('#sort-content');
+const $categoryContent = document.querySelector('#category-content');
+
 export {
   $searchBtn,
   $search,
@@ -21,8 +21,7 @@ export {
   $main,
   $logo,
   $pageContainer,
-  $prevBtn,
-  $pages,
-  $nextBtn,
   $dropDown,
+  $sortContent,
+  $categoryContent,
 };

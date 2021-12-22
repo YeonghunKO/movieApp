@@ -7,11 +7,15 @@ import {
   $input,
   $logo,
   $dropDown,
+  $main,
+  $sortContent,
+  $categoryContent,
 } from './utils/doms.js';
 
 import getMovies from './utils/api.js';
-import showMoviesByObj from './utils/template.js';
+import { showMoviesByObj } from './utils/template.js';
 
+let mix = null;
 const API_KEY = '71c72e51587ffa55d1c377e3ed0e5b0c';
 
 let state = {
@@ -97,11 +101,23 @@ async function init({ dbType, searchTerm }) {
   setPagenation(total_pages);
 }
 
-$form.addEventListener('submit', function (e) {
+function resetSortDropDownContent() {
+  $sortContent.innerText = 'Sort by';
+}
+
+function resetCategoryDropDownContent() {
+  $categoryContent.innerText = 'Category';
+}
+
+$form.addEventListener('submit', async function (e) {
   e.preventDefault();
+  resetCategoryDropDownContent();
   const searchTerm = $input.value.trim();
   if (searchTerm.length > 0) {
     init({ dbType: 'searching', searchTerm });
+    if (mix) {
+      mix.destroy();
+    }
   }
   $input.value = '';
 });
@@ -114,18 +130,38 @@ $searchBtn.addEventListener('click', e => {
   $search.classList.add('active');
 });
 
-$dropDown.addEventListener('click', e => {
-  const { nodeName, classList, textContent, parentNode } = e.target;
+$dropDown.addEventListener('click', async e => {
+  const { nodeName, textContent, parentNode } = e.target;
+
   if (nodeName === 'LI') {
-    classList.add('clicked');
+    mix = mixitup($main, {
+      animation: {
+        effects: 'fade rotateZ(-180deg)',
+        duration: 700,
+      },
+      classNames: {
+        // 버튼을 클릭했을때 버튼에 추가되는 클래스 이름
+        // 필터버튼에는 'programs-filter-btn-active'
+        // 정렬버튼에는 'programs-sort-btn-active' 요런식으로 클래스가 add됨
+        // 만약, block property가 없으면 'mixitup' 이 default로 programs자리에 들어감
+        block: 'programs',
+        elementFilter: 'filter-btn',
+        elementSort: 'sort-btn',
+      },
+      selectors: {
+        target: '.mix-target',
+      },
+    });
+
     const $chosen = e.target.closest('.dropdown').querySelector('.chosen');
+
     if (parentNode.classList.contains('category')) {
       $chosen.innerText = textContent;
     } else {
-      $chosen.innerText = 'By ' + textContent;
+      $chosen.innerText = 'By ' + textContent.trim();
     }
 
-    switch (textContent) {
+    switch (textContent.trim('')) {
       case 'Top rated':
         init({ dbType: 'topRated' });
         break;
@@ -137,33 +173,48 @@ $dropDown.addEventListener('click', e => {
         break;
       case 'Vote':
         sortBy('vote');
+        mix.sort('vote:desc');
         break;
       case 'Release date':
         sortBy('date');
+        mix.sort('date:desc');
         break;
       default:
-        console.log('invalid textContent');
     }
+    mix.destroy();
   }
 });
 
 function sortBy(type) {
-  let sortedPageData;
-  if (type === 'vote') {
-    console.log(type);
-    sortedPageData = db[state.searchTerm][page.state.current].sort(
-      (a, b) => b.vote_average - a.vote_average
-    );
+  const { dbType, searchTerm } = state;
+  if (dbType === 'searching') {
+    if (type === 'vote') {
+      db[searchTerm][page.state.current].sort(
+        (a, b) => b.vote_average - a.vote_average
+      );
+    } else {
+      db[searchTerm][page.state.current].sort(
+        (a, b) => new Date(b.release_date) - new Date(a.release_date)
+      );
+    }
   } else {
-    sortedPageData = db[state.searchTerm][page.state.current].sort(
-      (a, b) => new Date(b.release_date) - new Date(a.release_date)
-    );
+    if (type === 'vote') {
+      db[dbType][page.state.current].sort(
+        (a, b) => b.vote_average - a.vote_average
+      );
+    } else {
+      db[dbType][page.state.current].sort(
+        (a, b) => new Date(b.release_date) - new Date(a.release_date)
+      );
+    }
   }
-  showMoviesByObj(sortedPageData);
 }
 
 async function onPage(page) {
-  console.log('dbType:', state.dbType);
+  if (mix) {
+    mix.destroy();
+  }
+
   if (state.dbType === 'searching') {
     if (!db[state.searchTerm]) {
       db[state.searchTerm] = [];
@@ -175,27 +226,23 @@ async function onPage(page) {
 }
 
 async function showMoviesByDb(dbKey, page) {
-  console.log('dbKey:', dbKey);
-  console.log('page:', page);
+  resetSortDropDownContent();
   let movieData;
   if (db[dbKey][page]) {
-    console.log('searching in db...');
     showMoviesByObj(db[dbKey][page]);
   } else {
-    console.log('get new data');
     movieData = await getDataByCurrentDbType({ page });
     const { results } = movieData;
     showMoviesByObj(results);
     db[dbKey][page] = results;
   }
-  console.log(db);
 }
 
 init({ dbType: 'trend' });
 
 /*
 4.history to go back and forth
-
+5.mix가 search일때도 작동하게 만들어라. destroy를 어디에다 적용할지 생각!
 bonus:component(if you want)
 
 
