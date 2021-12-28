@@ -54,10 +54,6 @@ body {
   grid-auto-columns: minmax(100px, auto); */
 }
 
-#main a:hover {
-  transform: scale(1.1);
-}
-
 #main a {
   transition: transform 0.1s ease-in;
 }
@@ -72,6 +68,10 @@ body {
   box-shadow: 0 4px 5px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   border-radius: 3px;
+  transition: transform 0.35s;
+  -o-transition: transform 0.35s;
+  -moz-transition: transform 0.35s;
+  -webkit-transition: transform 0.35s;
 }
 
 .movie img {
@@ -155,4 +155,13 @@ body {
   transform: translateY(0);
   backdrop-filter: brightness(0.2);
   transition: transform 0.3s ease-in;
+}
+
+.movie:hover {
+  transform: scale(1.02);
+  /* transition: transfrom 3ms ease-in; */
+  transition: transform 0.35s;
+  -o-transition: transform 0.35s;
+  -moz-transition: transform 0.35s;
+  -webkit-transition: transform 0.35s;
 }

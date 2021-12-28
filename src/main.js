@@ -14,6 +14,7 @@ import {
 
 import getMovies from './utils/api.js';
 import { showMoviesByObj } from './utils/template.js';
+import { routerDispatcher, initRouter } from './utils/router.js';
 
 let mix = null;
 const API_KEY = '71c72e51587ffa55d1c377e3ed0e5b0c';
@@ -115,6 +116,7 @@ $form.addEventListener('submit', async function (e) {
   const searchTerm = $input.value.trim();
   if (searchTerm.length > 0) {
     init({ dbType: 'searching', searchTerm });
+    routerDispatcher({ dbType: 'searching', searchTerm, currentPage: 1 });
     if (mix) {
       mix.destroy();
     }
@@ -124,6 +126,7 @@ $form.addEventListener('submit', async function (e) {
 
 $logo.addEventListener('click', () => {
   init({ dbType: 'trend' });
+  routerDispatcher({ dbType: 'trend', currentPage: 1 });
 });
 
 $searchBtn.addEventListener('click', e => {
@@ -164,12 +167,15 @@ $dropDown.addEventListener('click', async e => {
     switch (textContent.trim('')) {
       case 'Top rated':
         init({ dbType: 'topRated' });
+        routerDispatcher({ dbType: 'topRated', currentPage: 1 });
         break;
       case 'Upcoming':
         init({ dbType: 'upComing' });
+        routerDispatcher({ dbType: 'upComing', currentPage: 1 });
         break;
       case 'Now playing':
         init({ dbType: 'nowPlaying' });
+        routerDispatcher({ dbType: 'nowPlaying', currentPage: 1 });
         break;
       case 'Vote':
         sortBy('vote');
@@ -215,13 +221,16 @@ async function onPage(page) {
     mix.destroy();
   }
 
-  if (state.dbType === 'searching') {
-    if (!db[state.searchTerm]) {
-      db[state.searchTerm] = [];
+  const { dbType, searchTerm } = state;
+  if (dbType === 'searching') {
+    if (!db[searchTerm]) {
+      db[searchTerm] = [];
     }
-    showMoviesByDb(state.searchTerm, page);
+    showMoviesByDb(searchTerm, page);
+    routerDispatcher({ dbType, searchTerm, currentPage: page });
   } else {
-    showMoviesByDb(state.dbType, page);
+    showMoviesByDb(dbType, page);
+    routerDispatcher({ dbType, currentPage: page });
   }
 }
 
@@ -238,11 +247,28 @@ async function showMoviesByDb(dbKey, page) {
   }
 }
 
+function onRoute({ dbKey, currentPage }) {
+  if (db[dbKey].length) {
+    // dbKey is not defined?? why??
+    //
+    const pageObj = db[dbKey][currentPage];
+    console.log(pageObj);
+    console.log(db);
+    if (pageObj) {
+      // showMoviesByObj(pageObj);
+      // page.setState({ total: db[dbKey]., current: currentPage });
+    }
+    // console.log(dbKey, page);
+  }
+}
+
 init({ dbType: 'trend' });
+
+initRouter(onRoute);
 
 /*
 4.history to go back and forth
-5.mix가 search일때도 작동하게 만들어라. destroy를 어디에다 적용할지 생각!
+  - 로토님의 history, route 코드를 복습해서 구현해봐라.
 bonus:component(if you want)
 
 

@@ -49,7 +49,18 @@
 
 11. 드랍다운 [링크](https://codepen.io/codypearce/pen/PdBXpj?editors=0100) 참고
 
-# JS
+12. a태그가 아닌 .movie 에다가 scale을 적용해줘야함. 왜냐면 sort이후에 a 태그는 인라인 스타일이 적용되어 scale이 덮어씌어져 효력을 잃어버림.
+
+그리고 transition같은 경우 호환성을 위해 아래 코드와 같이 적용 시켜 줄 것.
+
+```css
+transition: transform 0.35s;
+-o-transition: transform 0.35s;
+-moz-transition: transform 0.35s;
+-webkit-transition: transform 0.35s;
+```
+
+# JS (5번은 따로 빼서 article로 작성한다음에 JS BASIC에 추가하기(custom, history, CSR VS SSR))
 
 1. API 사용법을 알고 싶으면 `https://developers.themoviedb.org/3/getting-started/introduction` 에 들어가서 검색란에 내용을 검색하면 된다.
 
@@ -60,3 +71,11 @@
 예를 들면, ajax call하기 전의 main의 콘텐츠가 `dbType:trend ,page:1`이라고 가정하자. 그러나 두번째 페이지를 누르거나 카테고리를 바꾸면 target도 그에 따라서 바뀌어야 하는 데 mix에 저장되어있는 target은 여전히 `dbType:trend ,page:1` 이다. 따라서 trend안에 있는 target들을 하나하나 main에서 찾고 옮겨야하는 mixitup에서 오류가 발생하는 것이다. 찾을 수 없으니 null이라고 뜨는 것 같다.
 
 따라서, 그전의 mix instance를 없애고 새로 mix를 만들고 target을 설정해줘야한다. 그때 필요한 메소드가 `.destroy()` 이다! (mixitup api 문서에 나와 있다.) 그래서 페이지, 카테고리가 바뀔때마다 destroy를 해주어 instance를 새로 갱신해주었다.
+
+[참고문서](https://www.sitepoint.com/animated-filtering-sorting-mixitup/)
+
+4. mixitup에서 `o.tolowercase is not a function.` 라는 에러가 뜨면 data attribute에서 뭐가 빠졌다는 뜻. 나같은 경우, date가 없는 경우 이 에러가 떴다. 따라서, template에서 `$anchor.dataset.date = release_date ? release_date : 0;` 해줌으로써 버그를 해결 할 수 있었다.
+
+5. New Custome, Dispatcher , history API 를 이용한 라우팅
+
+6. CSR VS SSR

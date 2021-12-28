@@ -84,8 +84,8 @@ function showMoviesByObj(movies) {
         `https://www.themoviedb.org/movie/${id}${title}`
       );
 
-      $anchor.dataset.vote = vote_average;
-      $anchor.dataset.date = release_date;
+      $anchor.dataset.vote = vote_average ? vote_average : 0;
+      $anchor.dataset.date = release_date ? release_date : 0;
       $anchor.classList.add('mix-target');
 
       $poster.innerHTML = `
@@ -98,7 +98,7 @@ function showMoviesByObj(movies) {
 
       $title.innerHTML = title;
       $genre.innerHTML = decodeGenre(genre_ids);
-      $date.innerHTML = release_date;
+      $date.innerHTML = release_date ? release_date : 0;
       $score.innerHTML = `${vote_average} / 10`;
       $overview.innerHTML = `
         <h3>Overview</h3>
