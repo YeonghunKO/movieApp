@@ -79,3 +79,24 @@ transition: transform 0.35s;
 5. New Custome, Dispatcher , history API 를 이용한 라우팅
 
 6. CSR VS SSR
+
+7. `cannot destructure total_pages of movieData as it is undefined(main.js 100줄 쯤)` 라는 오류가 떴다. 이번에는 movieData를 로그하거나 showMoviesByDb에 있는 movieData를 로그하지 않고 차근차근 말로 설명하면서 거슬러 올라갔다. 그러니깐, showMoviesByDb에서 movieData에 값이 할당 안되었다는 사실을 추측할 수 있었다.
+
+자세히 살펴보니 if에 dbKey가 있으면 그냥 db에 있는 걸 꺼내서 showMoviesByObj를 통해서 보여주기만 하고 movieData에 아무것도 할당하지 않았기 때문에 undefined가 리턴된다는 것을 알 수 있었다!!
+
+이전엔, 그냥 `차분하게` 문제의 원인을 파악하려 하지 않고 무조건 로그만 찍어보면서 주먹구구식으로 버그를 찾아내려고 했는데 차분하게 거슬러 올라가보니 생각보다 쉽게 버그를 찾아냈다!! 요런식으로 문제 원인을 생각하는 연습을 해보자!!
+
+8. 검색하고 나서(검색어가 'well'이라고 하자) 앞뒤로 가기를 누른다음에 다시 page를 누르면 url에 query가 빠지고 dbType에 query가 들어간다.(well?page=2 요런식으로) 그리고 ` Cannot destructure property 'results' of 'movieData' as it is undefined.` 가 뜬다.
+
+onPage에서 dispatch를 잘못하고 있는거 같다.
+
+onPage에서 dbType이 searching이 되어야 하는데 'well'이 되어있다. 즉 setState를 잘못 해줬다는 말이된다.
+
+그럼 onRoute에서 오류가 발생한다는 것! 보니깐 `dbKey === 'searching'`이 아니라 `dbType === 'searching'` 이 되어야 한다. 따라서 dbType을 router.js - popstate할때 넘겨주었다.
+
+요런식으로, 현재 현상을 차분히 생각해보면 그 현상에 영향을 끼치는 함수, 변수를 찾아가게 된다. 그럼 실마리가 잡히기 시작하게 될것이다.
+
+# 해야할 거
+
+1. onRoute할때 카테고리도 바꾸기
+2. 깃헙 커밋

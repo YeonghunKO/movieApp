@@ -30,14 +30,21 @@ const initRouter = onRoute => {
   window.addEventListener('popstate', event => {
     if (event.state) {
       const { dbType, currentPage, searchTerm } = event.state;
-      console.log(dbType, currentPage, searchTerm);
+      // console.log(
+      //   'dbType:',
+      //   dbType,
+      //   '\ncurrentPage:',
+      //   currentPage,
+      //   '\nsearchTerm:',
+      //   searchTerm
+      // );
       if (dbType === 'searching') {
-        onRoute({ dbKey: searchTerm, currentPage });
+        onRoute({ dbKey: searchTerm, currentPage, dbType });
       } else {
-        onRoute({ dbKey: dbType, currentPage });
+        onRoute({ dbKey: dbType, currentPage, dbType });
       }
     } else {
-      onRoute({ dbKey: 'trend', currentPage: 1 });
+      onRoute({ dbKey: 'trend', currentPage: 1, dbType: 'trend' });
     }
   });
 };

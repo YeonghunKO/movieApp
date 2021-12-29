@@ -85,20 +85,19 @@ function setPagenation(totalPage) {
 }
 
 async function init({ dbType, searchTerm }) {
+  let movieData;
   if (dbType === 'searching') {
     if (!db[searchTerm]) {
       db[searchTerm] = [];
     }
     setState({ dbType, searchTerm });
-    showMoviesByDb(state.searchTerm, 1);
+    movieData = await showMoviesByDb(state.searchTerm, 1);
   } else {
     setState({ ...state, dbType });
-    showMoviesByDb(state.dbType, 1);
+    movieData = await showMoviesByDb(state.dbType, 1);
   }
 
-  const movieData = await getDataByCurrentDbType({ page: 1 });
   const { total_pages } = movieData;
-
   setPagenation(total_pages);
 }
 
@@ -239,46 +238,42 @@ async function showMoviesByDb(dbKey, page) {
   let movieData;
   if (db[dbKey][page]) {
     showMoviesByObj(db[dbKey][page]);
+    return db[dbKey];
   } else {
     movieData = await getDataByCurrentDbType({ page });
-    const { results } = movieData;
+    const { results, total_pages } = movieData;
     showMoviesByObj(results);
     db[dbKey][page] = results;
+    db[dbKey]['total_pages'] = total_pages > 20 ? 20 : total_pages;
   }
+  return movieData;
 }
 
-function onRoute({ dbKey, currentPage }) {
+function onRoute({ dbKey, currentPage, dbType }) {
   if (db[dbKey].length) {
-    // dbKey is not defined?? why??
-    //
     const pageObj = db[dbKey][currentPage];
-    console.log(pageObj);
-    console.log(db);
     if (pageObj) {
-      // showMoviesByObj(pageObj);
-      // page.setState({ total: db[dbKey]., current: currentPage });
+      showMoviesByObj(pageObj);
+      page.setState({ total: db[dbKey]['total_pages'], current: currentPage });
+      if (dbType === 'searching') {
+        setState({ dbType, searchTerm: dbKey });
+        $categoryContent.innerText = 'Category';
+      } else {
+        setState({ ...state, dbType: dbKey });
+        let categoryContent;
+        if (dbType === 'topRated') {
+          categoryContent = 'Top rated';
+        } else if (dbType === 'upComing') {
+          categoryContent = 'Upcoming';
+        } else if (dbType === 'trend' || dbType === 'nowPlaying') {
+          categoryContent = 'Now playing';
+        }
+        $categoryContent.innerText = categoryContent;
+      }
     }
-    // console.log(dbKey, page);
   }
 }
 
 init({ dbType: 'trend' });
 
 initRouter(onRoute);
-
-/*
-4.history to go back and forth
-  - 로토님의 history, route 코드를 복습해서 구현해봐라.
-bonus:component(if you want)
-
-
-
-style
-https://medium.muz.li/movie-cinema-ui-inspiration-9b76d4e6c05
-
-Movie Application UI by Ricardo Salazar 처럼 디자인하기
-release date는 genre밑에 위치하도록
-
-드랍다운 아래참고.
-https://codepen.io/codypearce/pen/PdBXpj?editors=0100
-*/
