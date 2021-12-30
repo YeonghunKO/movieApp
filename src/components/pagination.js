@@ -1,5 +1,5 @@
-import { $pageContainer } from './utils/doms.js';
-import { CreatePagination } from './utils/template.js';
+import { $pageContainer } from '../utils/doms.js';
+import { CreatePagination } from '../utils/template.js';
 
 export default function Pagination({ onPage }) {
   this.state = {

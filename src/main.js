@@ -1,4 +1,4 @@
-import Pagination from './pagination.js';
+import Pagination from './components/pagination.js';
 
 import {
   $searchBtn,
@@ -215,7 +215,7 @@ function sortBy(type) {
   }
 }
 
-async function onPage(page) {
+function onPage(page) {
   if (mix) {
     mix.destroy();
   }
