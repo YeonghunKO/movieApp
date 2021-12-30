@@ -93,13 +93,12 @@ transition: transform 0.35s;
 
 예를 들면, ajax call하기 전의 main의 콘텐츠가 `dbType:trend ,page:1`이라고 가정하자. 그러나 두번째 페이지를 누르거나 카테고리를 바꾸면 target도 그에 따라서 바뀌어야 하는 데 mix에 저장되어있는 target은 여전히 `dbType:trend ,page:1` 이다. 따라서 trend안에 있는 target들을 하나하나 main에서 찾고 옮겨야하는 mixitup에서 오류가 발생하는 것이다. 찾을 수 없으니 null이라고 뜨는 것 같다.
 
-따라서, 그전의 mix instance를 없애고 새로 mix를 만들고 target을 설정해줘야한다. 그때 필요한 메소드가 `.destroy()` 이다! (mixitup api 문서에 나와 있다.) 그래서 페이지, 카테고리가 바뀔때마다 destroy를 해주어 instance를 새로 갱신해주었다.
+따라서, 그전의 mix instance를 없애고 새로 mix를 만들고 target을 설정해줘야한다. 그때 필요한 메소드가 `.destroy()` 이다! (mixitup api 문서에 나와 있다.) 그래서 페이지, 카테고리가 바뀔때마다 destroy를 해주어 instance를 새로 갱신해주었다.[참고문서](https://www.sitepoint.com/animated-filtering-sorting-mixitup/)
 
-[참고문서](https://www.sitepoint.com/animated-filtering-sorting-mixitup/)
 
 4. mixitup에서 `o.tolowercase is not a function.` 라는 에러가 뜨면 data attribute에서 뭐가 빠졌다는 뜻. 나같은 경우, date가 없는 경우 이 에러가 떴다. 따라서, template에서 `$anchor.dataset.date = release_date ? release_date : 0;` 해줌으로써 버그를 해결 할 수 있었다.
 
-5. New Custome, Dispatcher , history API 를 이용한 라우팅. 아티클로 정리함. [요기]()
+5. New Custome, Dispatcher , history API 를 이용한 라우팅. 아티클로 정리함. [요기](https://velog.io/@yhko1992/%EB%9D%BC%EC%9A%B0%ED%8C%85-%ED%95%98%EA%B8%B0-%ED%95%84%EC%9A%94%ED%95%9C-%EA%B8%B0%EC%88%A0-%EA%B0%84%EB%9E%B5-%EC%86%8C%EA%B0%9C)
 
 6. `cannot destructure total_pages of movieData as it is undefined(main.js 100줄 쯤)` 라는 오류가 떴다. 이번에는 movieData를 로그하거나 showMoviesByDb에 있는 movieData를 로그하지 않고 차근차근 말로 설명하면서 거슬러 올라갔다. 그러니깐, showMoviesByDb에서 movieData에 값이 할당 안되었다는 사실을 추측할 수 있었다.
 
@@ -115,4 +114,4 @@ onPage에서 dbType이 searching이 되어야 하는데 'well'이 되어있다. 
 
 그럼 onRoute에서 오류가 발생한다는 것! 보니깐 `dbKey === 'searching'`이 아니라 `dbType === 'searching'` 이 되어야 한다. 따라서 dbType을 router.js - popstate할때 넘겨주었다.
 
-요런식으로, 현재 현상을 차분히 생각해보면 그 현상에 영향을 끼치는 함수, 변수를 찾아가게 된다. 그럼 실마리가 잡히기 시작하게 될것이다.Qqoyo
+요런식으로, 현재 현상을 차분히 생각해보면 그 현상에 영향을 끼치는 함수, 변수를 찾아가게 된다. 그럼 실마리가 잡히기 시작하게 될것이다.
