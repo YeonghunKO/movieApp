@@ -11,7 +11,15 @@
       integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
       crossorigin="anonymous"
     />
+
     <link rel="stylesheet" href="./src/assets/main.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+      integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/162656/mixitup.min.js"></script>
   </head>
   <body>
     <header>
@@ -32,59 +40,30 @@
         </form>
       </div>
     </header>
-    <main id="main">
-      <div class="movie">
-        <div class="poster animated-bg"></div>
-        <div class="movie-info">
-          <div class="title">
-            <span class="animated-bg animated-bg-text"></span>
-          </div>
-          <div class="genre">
-            <span class="animated-bg animated-bg-text"></span>
-          </div>
-          <div class="date">
-            <span class="animated-bg animated-bg-text"></span>
-          </div>
-          <div class="score animated-bg">&nbsp;</div>
-        </div>
-      </div>
-      <div class="movie">
-        <div class="poster animated-bg"></div>
-        <div class="movie-info">
-          <div class="title">
-            <span class="animated-bg animated-bg-text"></span>
-          </div>
-          <div class="genre">
-            <span class="animated-bg animated-bg-text"></span>
-          </div>
-          <div class="date">
-            <span class="animated-bg animated-bg-text"></span>
-          </div>
-          <div class="score animated-bg">&nbsp;</div>
-        </div>
-      </div>
-      
-    </main>
-    <footer class="pagination">
-      <div class="prev">
-        <i class="fas fa-chevron-left"></i>
-        <span>prev</span>
-      </div>
-      <div class="pages">
-        <button class="button">1</button>
-        <button class="button">2</button>
-        <button class="button">3</button>
-        <button class="button">4</button>
-        <button class="button">5</button>
-      </div>
-      <div class="next">
-        <span>next</span>
-        <i class="fas fa-chevron-right"></i>
-      </div>
-    </div>
+    <nav>
+      <ul class="menu">
+        <li class="dropdown">
+          <span class="chosen" id="category-content">Category</span>
+          <ul class="dropdown_menu category">
+            <li class="dropdown_item one">Top rated</li>
+            <li class="dropdown_item two">Upcoming</li>
+            <li class="dropdown_item three">Now playing</li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <span class="chosen" id="sort-content">Sort by</span>
+          <ul class="dropdown_menu sort">
+            <li class="dropdown_item one" data-sort="vote:desc">Vote</li>
+            <li class="dropdown_item two" data-sort="date:desc">
+              Release date
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <main id="main"></main>
+    <footer id="pagination"></footer>
 
-    <script src="./src/search.js"></script>
-    <script src="./src/main.js"></script>
-    <script src="./src/pagination.js"></script>
+    <script src="./src/main.js" type="module"></script>
   </body>
 </html>
