@@ -89,24 +89,26 @@ pagination 같은 경우 컴포넌트로 따로 빼서 구현하고 싶었음.
 
 2. closest는 오로지 내 조상들에게만 적용, 조상들의 형제 자매에겐 적용안됨.
 
-3. mix에서 `Uncaught (in promise) TypeError: Cannot read properties of null (reading 'removeChild')` 에러가 뜨는 이유는 mix안에 target이 ajax call 하기 전의 target의 데이터를 가지고 ajax call하고 난뒤의 target에 적용하려고 하기 때문에 그렇다.
+## 에러
+
+1. mix에서 `Uncaught (in promise) TypeError: Cannot read properties of null (reading 'removeChild')` 에러가 뜨는 이유는 mix안에 target이 ajax call 하기 전의 target의 데이터를 가지고 ajax call하고 난뒤의 target에 적용하려고 하기 때문에 그렇다.
 
     - 예를 들면, ajax call하기 전의 main의 콘텐츠가 `dbType:trend ,page:1`이라고 가정하자. 그러나 두번째 페이지를 누르거나 카테고리를 바꾸면 target도 그에 따라서 바뀌어야 하는 데 mix에 저장되어있는 target은 여전히 `dbType:trend ,page:1` 이다. 따라서 trend안에 있는 target들을 하나하나 main에서 찾고 옮겨야하는 mixitup에서 오류가 발생하는 것이다. 찾을 수 없으니 null이라고 뜨는 것 같다.
 
     - 따라서, 그전의 mix instance를 없애고 새로 mix를 만들고 target을 설정해줘야한다. 그때 필요한 메소드가 `.destroy()` 이다! (mixitup api 문서에 나와 있다.) 그래서 페이지, 카테고리가 바뀔때마다 destroy를 해주어 instance를 새로 갱신해주었다.[참고문서](https://www.sitepoint.com/animated-filtering-sorting-mixitup/)
 
 
-4. mixitup에서 `o.tolowercase is not a function.` 라는 에러가 뜨면 data attribute에서 뭐가 빠졌다는 뜻. 나같은 경우, date가 없는 경우 이 에러가 떴다. 따라서, template에서 `$anchor.dataset.date = release_date ? release_date : 0;` 해줌으로써 버그를 해결 할 수 있었다.
+2. mixitup에서 `o.tolowercase is not a function.` 라는 에러가 뜨면 data attribute에서 뭐가 빠졌다는 뜻. 나같은 경우, date가 없는 경우 이 에러가 떴다. 따라서, template에서 `$anchor.dataset.date = release_date ? release_date : 0;` 해줌으로써 버그를 해결 할 수 있었다.
 
-5. New Custome, Dispatcher , history API 를 이용한 라우팅. 아티클로 정리함. [요기](https://velog.io/@yhko1992/%EB%9D%BC%EC%9A%B0%ED%8C%85-%ED%95%98%EA%B8%B0-%ED%95%84%EC%9A%94%ED%95%9C-%EA%B8%B0%EC%88%A0-%EA%B0%84%EB%9E%B5-%EC%86%8C%EA%B0%9C)
+3. New Custome, Dispatcher , history API 를 이용한 라우팅. 아티클로 정리함. [요기](https://velog.io/@yhko1992/%EB%9D%BC%EC%9A%B0%ED%8C%85-%ED%95%98%EA%B8%B0-%ED%95%84%EC%9A%94%ED%95%9C-%EA%B8%B0%EC%88%A0-%EA%B0%84%EB%9E%B5-%EC%86%8C%EA%B0%9C)
 
-6. `cannot destructure total_pages of movieData as it is undefined(main.js 100줄 쯤)` 라는 오류가 떴다. 이번에는 movieData를 로그하거나 showMoviesByDb에 있는 movieData를 로그하지 않고 차근차근 말로 설명하면서 거슬러 올라갔다. 그러니깐, showMoviesByDb에서 movieData에 값이 할당 안되었다는 사실을 추측할 수 있었다.
+4. `cannot destructure total_pages of movieData as it is undefined(main.js 100줄 쯤)` 라는 오류가 떴다. 이번에는 movieData를 로그하거나 showMoviesByDb에 있는 movieData를 로그하지 않고 차근차근 말로 설명하면서 거슬러 올라갔다. 그러니깐, showMoviesByDb에서 movieData에 값이 할당 안되었다는 사실을 추측할 수 있었다.
 
     - 자세히 살펴보니 if에 dbKey가 있으면 그냥 db에 있는 걸 꺼내서 showMoviesByObj를 통해서 보여주기만 하고 movieData에 아무것도 할당하지 않았기 때문에 undefined가 리턴된다는 것을 알 수 있었다!!
 
     - 이전엔, 그냥 `차분하게` 문제의 원인을 파악하려 하지 않고 무조건 로그만 찍어보면서 주먹구구식으로 버그를 찾아내려고 했는데 차분하게 거슬러 올라가보니 생각보다 쉽게 버그를 찾아냈다!! 요런식으로 문제 원인을 생각하는 연습을 해보자!!
 
-7. 검색하고 나서(검색어가 'well'이라고 하자) 앞뒤로 가기를 누른다음에 다시 page를 누르면 url에 query가 빠지고 dbType에 query가 들어간다.(well?page=2 요런식으로) 그리고 ` Cannot destructure property 'results' of 'movieData' as it is undefined.` 가 뜬다.(dbType:well 이기 때문에 getDataByCurrentDbType함수에서 switch에 걸리지 않는 것임. 그래서 undefined가 리턴 됨.)
+5. 검색하고 나서(검색어가 'well'이라고 하자) 앞뒤로 가기를 누른다음에 다시 page를 누르면 url에 query가 빠지고 dbType에 query가 들어간다.(well?page=2 요런식으로) 그리고 ` Cannot destructure property 'results' of 'movieData' as it is undefined.` 가 뜬다.(dbType:well 이기 때문에 getDataByCurrentDbType함수에서 switch에 걸리지 않는 것임. 그래서 undefined가 리턴 됨.)
 
     - onPage에서 dispatch를 잘못하고 있는거 같다.
 
